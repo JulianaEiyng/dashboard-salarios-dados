@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 
 # --- Configuração da Página ---
-# Define o título da página, o ícone e o layout para ocupar a largura inteira.
 st.set_page_config(
     page_title="Dashboard de Salários na Área de Dados",
     page_icon="📊",
@@ -13,8 +12,11 @@ st.set_page_config(
 # --- Carregamento dos dados ---
 df = pd.read_csv("https://raw.githubusercontent.com/vqrca/dashboard_salarios_dados/refs/heads/main/dados-imersao-final.csv")
 
-# --- Barra Lateral (Filtros) ---
+# --- Barra Lateral (Filtros e Foto de Perfil) ---
 st.sidebar.header("🔍 Filtros")
+
+# ABAIXO: Linha que adiciona foto
+st.sidebar.image("https://avatars.githubusercontent.com/u/251062894?v=4&size=64")
 
 # Filtro de Ano
 anos_disponiveis = sorted(df['ano'].unique())
@@ -33,7 +35,6 @@ tamanhos_disponiveis = sorted(df['tamanho_empresa'].unique())
 tamanhos_selecionados = st.sidebar.multiselect("Tamanho da Empresa", tamanhos_disponiveis, default=tamanhos_disponiveis)
 
 # --- Filtragem do DataFrame ---
-# O dataframe principal é filtrado com base nas seleções feitas na barra lateral.
 df_filtrado = df[
     (df['ano'].isin(anos_selecionados)) &
     (df['senioridade'].isin(senioridades_selecionadas)) &
@@ -54,7 +55,7 @@ if not df_filtrado.empty:
     total_registros = df_filtrado.shape[0]
     cargo_mais_frequente = df_filtrado["cargo"].mode()[0]
 else:
-    salario_medio, salario_mediano, salario_maximo, total_registros, cargo_mais_comum = 0, 0, 0, ""
+    salario_medio, salario_maximo, total_registros, cargo_mais_frequente = 0, 0, 0, ""
 
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Salário médio", f"${salario_medio:,.0f}")
@@ -135,5 +136,4 @@ with col_graf4:
 
 # --- Tabela de Dados Detalhados ---
 st.subheader("Dados Detalhados")
-
 st.dataframe(df_filtrado)
